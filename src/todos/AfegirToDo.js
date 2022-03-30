@@ -10,7 +10,8 @@ export function AfegirToDo({ onToDoAdded }) {
         const title = titleRef.current.value;
         console.log(title);
         titleRef.current.value = "";
-        postNewTodo(title).then((json) => onToDoAdded(json));
+        onToDoAdded({ title });
+        // postNewTodo(title).then((json) => onToDoAdded(json));
       }}
     >
       <input ref={titleRef} />

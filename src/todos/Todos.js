@@ -1,30 +1,28 @@
-import { useEffect, useReducer } from "react";
+import { useEffect } from "react";
 import { AfegirToDo } from "./AfegirToDo";
-import { replaceTodos, addTodo, updateTodo } from "./actions";
+import { requestTodos, requestAddTodo, requestUpdateTodo } from "./actions";
 import { TodoList } from "./TodoList";
-import { getTodos } from "./todosAPI";
-import { initialState, reduceTodos } from "./reducers";
+import { useDispatch, useSelector } from "react-redux";
+import { selectTodos } from "./selectors";
 
 export function Todos() {
-  const [todos, dispatch] = useReducer(reduceTodos, initialState);
+  const todos = useSelector(selectTodos);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    loadTodos();
-
     const intervalID = setInterval(() => loadTodos(), 1000);
     return () => clearInterval(intervalID);
   }, []);
 
-  const loadTodos = () =>
-    getTodos().then((allTodos) => dispatch(replaceTodos(allTodos)));
-  const onTodoAdded = (todo) => dispatch(addTodo(todo));
-  const onTodoUpdated = (todo) => dispatch(updateTodo(todo));
+  const loadTodos = () => dispatch(requestTodos());
+  const onTodoAdded = (todo) => dispatch(requestAddTodo(todo));
+  const onTodoUpdate = (todo) => dispatch(requestUpdateTodo(todo));
 
   return (
     <div className="App">
       <h1>Llistat de ToDo's</h1>
       <button onClick={loadTodos}>Refresh</button>
-      <TodoList todos={todos} onUpdated={onTodoUpdated} />
+      <TodoList todos={todos} onTodoUpdate={onTodoUpdate} />
       <AfegirToDo onToDoAdded={onTodoAdded} />
       <pre>{JSON.stringify(todos, null, 2)}</pre>
     </div>
